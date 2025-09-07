@@ -1,16 +1,45 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Star, Shield, Zap, Crown, Gamepad2, Trophy } from 'lucide-react';
+import { Star } from 'lucide-react';
+import { useSanityData } from '../../hooks/useSanity';
+import { queries, urlFor } from '../../lib/sanity';
+import { Sponsor } from '../../schemas';
 
 const Sponsors = () => {
-  const sponsors = [
-    { name: 'TechGear Pro', logo: Shield, tier: 'Platinum', color: 'text-[#E5E7EB]' },
-    { name: 'Energy Boost', logo: Zap, tier: 'Gold', color: 'text-[#F59E0B]' },
-    { name: 'Gaming Elite', logo: Crown, tier: 'Platinum', color: 'text-[#E5E7EB]' },
-    { name: 'ProGamer', logo: Gamepad2, tier: 'Silver', color: 'text-[#9CA3AF]' },
-    { name: 'Victory Labs', logo: Trophy, tier: 'Gold', color: 'text-[#F59E0B]' },
-    { name: 'Cyber Systems', logo: Star, tier: 'Silver', color: 'text-[#9CA3AF]' }
-  ];
+  const { data: sponsors, loading, error } = useSanityData<Sponsor[]>(queries.sponsors);
+
+  const getTierColor = (tier: string) => {
+    switch (tier) {
+      case 'Platinum': return 'text-[#E5E7EB]';
+      case 'Gold': return 'text-[#F59E0B]';
+      case 'Silver': return 'text-[#9CA3AF]';
+      default: return 'text-[#B0B0C0]';
+    }
+  };
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-[#1F1F2E] border-t border-[#2A2A3C]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="text-[#B0B0C0]">Loading sponsors...</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error || !sponsors) {
+    return (
+      <section className="py-20 bg-[#1F1F2E] border-t border-[#2A2A3C]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="text-[#FF4F91]">Error loading sponsors</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 bg-[#1F1F2E] border-t border-[#2A2A3C]">
@@ -53,7 +82,17 @@ const Sponsors = () => {
             >
               <div className="bg-[#2A2A3C]/30 backdrop-blur-sm border border-[#2A2A3C] rounded-2xl p-6 hover:border-[#00C2FF]/50 hover:bg-[#2A2A3C]/50 transition-all duration-300 text-center">
                 <div className="mb-4">
-                  <sponsor.logo className={`h-12 w-12 mx-auto ${sponsor.color} group-hover:text-[#00C2FF] transition-colors`} />
+                  {sponsor.logo ? (
+                    <img
+                      src={urlFor(sponsor.logo).width(48).height(48).url()}
+                      alt={sponsor.name}
+                      className="h-12 w-12 mx-auto object-contain"
+                    />
+                  ) : (
+                    <div className={`h-12 w-12 mx-auto ${getTierColor(sponsor.tier)} group-hover:text-[#00C2FF] transition-colors flex items-center justify-center text-2xl font-bold`}>
+                      {sponsor.name.charAt(0)}
+                    </div>
+                  )}
                 </div>
                 <h3 className="text-white font-semibold text-sm mb-1">{sponsor.name}</h3>
                 <p className="text-[#B0B0C0] text-xs">{sponsor.tier} Partner</p>

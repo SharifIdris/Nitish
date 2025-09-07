@@ -1,64 +1,27 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Twitter, Instagram, Twitch, Award } from 'lucide-react';
+import { useSanityData } from '../../hooks/useSanity';
+import { queries, urlFor } from '../../lib/sanity';
+import { Leadership, TeamMember } from '../../schemas';
 
 const TeamBios = () => {
-  const leadership = [
-    {
-      name: 'Sarah Chen',
-      role: 'CEO & Founder',
-      image: 'https://images.pexels.com/photos/3778876/pexels-photo-3778876.jpeg?auto=compress&cs=tinysrgb&w=400&h=500&fit=crop',
-      bio: 'Former pro player turned visionary leader. Sarah founded CrissCross with the mission to elevate esports to unprecedented heights.',
-      achievements: ['Forbes 30 Under 30', 'Esports Executive of the Year', 'Gaming Industry Pioneer Award'],
-      social: { twitter: '#', instagram: '#', twitch: '#' }
-    },
-    {
-      name: 'Marcus Rodriguez',
-      role: 'Head of Esports',
-      image: 'https://images.pexels.com/photos/3778876/pexels-photo-3778876.jpeg?auto=compress&cs=tinysrgb&w=400&h=500&fit=crop',
-      bio: 'Legendary coach with 15+ years experience. Marcus has guided teams to over 30 championship victories across multiple titles.',
-      achievements: ['Coach of the Decade', '5x World Championship Coach', 'Esports Hall of Fame Inductee'],
-      social: { twitter: '#', instagram: '#', twitch: '#' }
-    },
-    {
-      name: 'Elena Vasquez',
-      role: 'Creative Director',
-      image: 'https://images.pexels.com/photos/3778876/pexels-photo-3778876.jpeg?auto=compress&cs=tinysrgb&w=400&h=500&fit=crop',
-      bio: 'Award-winning designer responsible for our iconic brand identity and cutting-edge content creation strategies.',
-      achievements: ['Design Excellence Award', 'Brand Innovation Leader', 'Creative Vision Award'],
-      social: { twitter: '#', instagram: '#', twitch: '#' }
-    }
-  ];
+  const { data: leadership, loading: leadershipLoading } = useSanityData<Leadership[]>(queries.leadership);
+  const { data: players, loading: playersLoading } = useSanityData<TeamMember[]>(queries.teamMembers);
 
-  const topPlayers = [
-    {
-      name: 'Phoenix',
-      realName: 'Jake Thompson',
-      game: 'Valorant',
-      role: 'Duelist',
-      image: 'https://images.pexels.com/photos/3419736/pexels-photo-3419736.jpeg?auto=compress&cs=tinysrgb&w=400&h=500&fit=crop',
-      stats: { winRate: '92%', kd: '1.8', tournaments: '24' },
-      achievements: ['VCT Champions 2024', 'MVP Masters Series', 'Rookie of the Year']
-    },
-    {
-      name: 'Apex',
-      realName: 'Maria Santos',
-      game: 'Apex Legends',
-      role: 'IGL',
-      image: 'https://images.pexels.com/photos/3419736/pexels-photo-3419736.jpeg?auto=compress&cs=tinysrgb&w=400&h=500&fit=crop',
-      stats: { winRate: '89%', damage: '2.1K', tournaments: '31' },
-      achievements: ['Global Champions 2024', 'Best IGL Award', 'Tournament MVP x3']
-    },
-    {
-      name: 'Storm',
-      realName: 'Alex Kim',
-      game: 'League of Legends',
-      role: 'Mid Laner',
-      image: 'https://images.pexels.com/photos/3419736/pexels-photo-3419736.jpeg?auto=compress&cs=tinysrgb&w=400&h=500&fit=crop',
-      stats: { winRate: '85%', kda: '3.2', tournaments: '19' },
-      achievements: ['Worlds Finalist 2024', 'LCS MVP', 'All-Star Selection']
-    }
-  ];
+  const topPlayers = players?.filter(player => player.featured) || [];
+
+  if (leadershipLoading || playersLoading) {
+    return (
+      <section className="py-20 bg-gradient-to-b from-[#252538] to-[#1F1F2E]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="text-[#B0B0C0]">Loading team information...</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 bg-gradient-to-b from-[#252538] to-[#1F1F2E]">
@@ -85,7 +48,7 @@ const TeamBios = () => {
         </motion.div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-20">
-          {leadership.map((member, index) => (
+          {leadership?.map((member, index) => (
             <motion.div
               key={index}
               initial={{ opacity: 0, y: 50 }}
@@ -98,7 +61,7 @@ const TeamBios = () => {
               <div className="bg-[#2A2A3C]/50 backdrop-blur-sm border border-[#2A2A3C] rounded-2xl p-6 hover:border-[#00C2FF]/50 transition-all duration-500">
                 <div className="relative mb-6">
                   <img
-                    src={member.image}
+                    src={member.image ? urlFor(member.image).width(400).height(500).url() : 'https://images.pexels.com/photos/3778876/pexels-photo-3778876.jpeg?auto=compress&cs=tinysrgb&w=400&h=500&fit=crop'}
                     alt={member.name}
                     className="w-full h-64 object-cover rounded-xl"
                   />
@@ -129,13 +92,13 @@ const TeamBios = () => {
                 </div>
 
                 <div className="flex justify-center space-x-4">
-                  <a href={member.social.twitter} className="text-[#B0B0C0] hover:text-[#1DA1F2] transition-colors">
+                  <a href={member.social?.twitter || '#'} className="text-[#B0B0C0] hover:text-[#1DA1F2] transition-colors">
                     <Twitter className="h-5 w-5" />
                   </a>
-                  <a href={member.social.instagram} className="text-[#B0B0C0] hover:text-[#E4405F] transition-colors">
+                  <a href={member.social?.instagram || '#'} className="text-[#B0B0C0] hover:text-[#E4405F] transition-colors">
                     <Instagram className="h-5 w-5" />
                   </a>
-                  <a href={member.social.twitch} className="text-[#B0B0C0] hover:text-[#9146FF] transition-colors">
+                  <a href={member.social?.twitch || '#'} className="text-[#B0B0C0] hover:text-[#9146FF] transition-colors">
                     <Twitch className="h-5 w-5" />
                   </a>
                 </div>
@@ -179,7 +142,7 @@ const TeamBios = () => {
               <div className="bg-[#2A2A3C]/50 backdrop-blur-sm border border-[#2A2A3C] rounded-2xl p-6 hover:border-[#00C2FF]/50 transition-all duration-500">
                 <div className="relative mb-6">
                   <img
-                    src={player.image}
+                    src={player.image ? urlFor(player.image).width(400).height(300).url() : 'https://images.pexels.com/photos/3419736/pexels-photo-3419736.jpeg?auto=compress&cs=tinysrgb&w=400&h=300&fit=crop'}
                     alt={player.name}
                     className="w-full h-48 object-cover rounded-xl"
                   />
@@ -196,11 +159,11 @@ const TeamBios = () => {
 
                 <div className="text-center mb-6">
                   <h3 className="text-2xl font-bold text-white mb-1">{player.name}</h3>
-                  <p className="text-[#B0B0C0] text-sm mb-4">{player.realName}</p>
+                  <p className="text-[#B0B0C0] text-sm mb-4">{player.realName || ''}</p>
                 </div>
 
                 <div className="grid grid-cols-3 gap-4 mb-6">
-                  {Object.entries(player.stats).map(([key, value], i) => (
+                  {Object.entries(player.stats || {}).map(([key, value], i) => (
                     <div key={i} className="text-center">
                       <div className="text-xl font-bold text-[#00C2FF]">{value}</div>
                       <div className="text-[#B0B0C0] text-xs capitalize">{key.replace(/([A-Z])/g, ' $1')}</div>
@@ -209,12 +172,12 @@ const TeamBios = () => {
                 </div>
 
                 <div className="space-y-2">
-                  {player.achievements.map((achievement, i) => (
+                  {player.achievements?.map((achievement, i) => (
                     <div key={i} className="flex items-center text-[#B0B0C0] text-sm">
                       <div className="w-1.5 h-1.5 bg-[#FF4F91] rounded-full mr-2" />
                       {achievement}
                     </div>
-                  ))}
+                  )) || []}
                 </div>
               </div>
             </motion.div>

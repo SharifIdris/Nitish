@@ -1,50 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Clock, User, ArrowRight, Bookmark } from 'lucide-react';
+import { useSanityData } from '../../hooks/useSanity';
+import { queries, urlFor } from '../../lib/sanity';
+import { NewsArticle } from '../../schemas';
 
 const NewsSection = () => {
-  const news = [
-    {
-      id: 1,
-      title: 'CrissCross Apex Squad Wins Global Championship',
-      excerpt: 'Our Apex Legends team dominates the international tournament with a flawless victory, securing their third consecutive championship title.',
-      image: 'https://images.pexels.com/photos/3419736/pexels-photo-3419736.jpeg?auto=compress&cs=tinysrgb&w=800&h=400&fit=crop',
-      author: 'Sarah Chen',
-      date: '2 hours ago',
-      category: 'Tournament',
-      featured: true
-    },
-    {
-      id: 2,
-      title: 'New Valorant Roster Announcement',
-      excerpt: 'Introducing our enhanced Valorant lineup with two new professional players joining the championship squad.',
-      image: 'https://images.pexels.com/photos/3165335/pexels-photo-3165335.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop',
-      author: 'Marcus Thompson',
-      date: '6 hours ago',
-      category: 'Team News',
-      featured: false
-    },
-    {
-      id: 3,
-      title: 'Partnership with Global Gaming Sponsors',
-      excerpt: 'CrissCross Esports announces major sponsorship deals with leading gaming hardware and energy drink brands.',
-      image: 'https://images.pexels.com/photos/442576/pexels-photo-442576.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop',
-      author: 'Alex Rivera',
-      date: '1 day ago',
-      category: 'Business',
-      featured: false
-    },
-    {
-      id: 4,
-      title: 'Community Tournament Series Launch',
-      excerpt: 'Join our monthly community tournaments with prize pools and chances to be scouted by our professional teams.',
-      image: 'https://images.pexels.com/photos/3419736/pexels-photo-3419736.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop',
-      author: 'Emma Wilson',
-      date: '2 days ago',
-      category: 'Community',
-      featured: false
-    }
-  ];
+  const { data: news, loading, error } = useSanityData<NewsArticle[]>(queries.news);
 
   const categoryColors = {
     'Tournament': 'text-[#00FF9D] bg-[#00FF9D]/20',
@@ -52,6 +14,41 @@ const NewsSection = () => {
     'Business': 'text-[#FF4F91] bg-[#FF4F91]/20',
     'Community': 'text-[#FFBE0B] bg-[#FFBE0B]/20'
   };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    const now = new Date();
+    const diffTime = Math.abs(now.getTime() - date.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+    
+    if (diffDays === 1) return '1 day ago';
+    if (diffDays < 7) return `${diffDays} days ago`;
+    return date.toLocaleDateString();
+  };
+
+  if (loading) {
+    return (
+      <section className="py-20 bg-gradient-to-b from-[#252538] to-[#1F1F2E]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="text-[#B0B0C0]">Loading news...</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (error || !news) {
+    return (
+      <section className="py-20 bg-gradient-to-b from-[#252538] to-[#1F1F2E]">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center">
+            <div className="text-[#FF4F91]">Error loading news: {error}</div>
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="py-20 bg-gradient-to-b from-[#252538] to-[#1F1F2E]">
@@ -89,11 +86,11 @@ const NewsSection = () => {
           className="mb-16"
         >
           {news.filter(article => article.featured).map((article) => (
-            <div key={article.id} className="group relative overflow-hidden rounded-3xl bg-[#2A2A3C]/50 backdrop-blur-sm border border-[#2A2A3C] hover:border-[#00C2FF]/50 transition-all duration-500">
+            <div key={article._id} className="group relative overflow-hidden rounded-3xl bg-[#2A2A3C]/50 backdrop-blur-sm border border-[#2A2A3C] hover:border-[#00C2FF]/50 transition-all duration-500">
               <div className="lg:flex">
                 <div className="lg:w-1/2 relative overflow-hidden">
                   <img
-                    src={article.image}
+                    src={article.image ? urlFor(article.image).width(800).height(400).url() : 'https://images.pexels.com/photos/3419736/pexels-photo-3419736.jpeg?auto=compress&cs=tinysrgb&w=800&h=400&fit=crop'}
                     alt={article.title}
                     className="w-full h-64 lg:h-full object-cover group-hover:scale-110 transition-transform duration-700"
                   />
@@ -115,7 +112,7 @@ const NewsSection = () => {
                     </div>
                     <div className="flex items-center space-x-2">
                       <Clock className="h-4 w-4" />
-                      <span>{article.date}</span>
+                      <span>{formatDate(article.publishedAt)}</span>
                     </div>
                   </div>
                   
@@ -141,7 +138,7 @@ const NewsSection = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
           {news.filter(article => !article.featured).map((article, index) => (
             <motion.article
-              key={article.id}
+              key={article._id}
               initial={{ opacity: 0, y: 50 }}
               whileInView={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.8, delay: index * 0.2 }}
@@ -151,7 +148,7 @@ const NewsSection = () => {
               {/* Image */}
               <div className="relative overflow-hidden">
                 <img
-                  src={article.image}
+                  src={article.image ? urlFor(article.image).width(600).height(300).url() : 'https://images.pexels.com/photos/3419736/pexels-photo-3419736.jpeg?auto=compress&cs=tinysrgb&w=600&h=300&fit=crop'}
                   alt={article.title}
                   className="w-full h-48 object-cover group-hover:scale-110 transition-transform duration-700"
                 />
