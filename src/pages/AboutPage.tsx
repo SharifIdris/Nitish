@@ -1,5 +1,6 @@
 import React from 'react';
 import { motion } from 'framer-motion';
+import Seo from '../components/Seo';
 import AboutHero from '../components/about/AboutHero';
 import MissionSection from '../components/about/MissionSection';
 import TeamBios from '../components/about/TeamBios';
@@ -14,6 +15,12 @@ const AboutPage = () => {
       exit={{ opacity: 0 }}
       transition={{ duration: 0.3 }}
     >
+      <Seo
+        title="About CrissCross Esports - Our Story & Mission"
+        description="Learn about CrissCross Esports' journey from startup to championship-winning organization. Meet our leadership team, discover our values, and explore our timeline of success."
+        url="https://crisscross.gg/about"
+        tags={['about', 'esports organization', 'gaming company', 'leadership team', 'mission', 'values', 'history']}
+      />
       <AboutHero />
       <MissionSection />
       <Values />
