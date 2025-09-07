@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { Zap, Trophy, Twitter, Instagram, Youtube, Twitch, Discord } from 'lucide-react';
+import { Zap, Trophy, Twitter, Instagram, Youtube, Twitch, MessageCircle } from 'lucide-react';
 
 const Footer = () => {
   const socialLinks = [
@@ -9,7 +9,7 @@ const Footer = () => {
     { icon: Instagram, href: '#', color: 'hover:text-pink-400' },
     { icon: Youtube, href: '#', color: 'hover:text-red-500' },
     { icon: Twitch, href: '#', color: 'hover:text-purple-500' },
-    { icon: Discord, href: '#', color: 'hover:text-indigo-400' },
+    { icon: MessageCircle, href: '#', color: 'hover:text-indigo-400' },
   ];
 
   const footerLinks = {
