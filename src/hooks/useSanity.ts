@@ -10,11 +10,18 @@ export function useSanityData<T>(query: string) {
     const fetchData = async () => {
       try {
         setLoading(true);
+        
+        // Check if Sanity is properly configured
+        if (!import.meta.env.VITE_SANITY_PROJECT_ID) {
+          throw new Error('Sanity project ID not configured. Please set VITE_SANITY_PROJECT_ID in your environment variables.');
+        }
+        
         const result = await client.fetch(query);
         setData(result);
         setError(null);
       } catch (err) {
-        setError(err instanceof Error ? err.message : 'An error occurred');
+        console.error('Sanity fetch error:', err);
+        setError(err instanceof Error ? err.message : 'An error occurred while fetching data');
         setData(null);
       } finally {
         setLoading(false);
