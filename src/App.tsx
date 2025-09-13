@@ -9,6 +9,7 @@ import TournamentsPage from './pages/TournamentsPage';
 import MediaPage from './pages/MediaPage';
 import CommunityPage from './pages/CommunityPage';
 import ContactPage from './pages/ContactPage';
+import BlogPage from './pages/BlogPage';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
             <Route path="/media" element={<MediaPage />} />
             <Route path="/community" element={<CommunityPage />} />
             <Route path="/contact" element={<ContactPage />} />
+            <Route path="/blog" element={<BlogPage />} />
           </Routes>
         </AnimatePresence>
         <Footer />

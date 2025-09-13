@@ -20,6 +20,7 @@ const Navbar = () => {
     { path: '/', label: 'Home' },
     { path: '/about', label: 'About' },
     { path: '/tournaments', label: 'Tournaments' },
+    { path: '/blog', label: 'Blog' },
     { path: '/media', label: 'Media' },
     { path: '/community', label: 'Community' },
     { path: '/contact', label: 'Contact' },

@@ -127,3 +127,32 @@ export interface CommunityEvent {
   image: any;
   featured: boolean;
 }
+
+export interface BlogPost {
+  _id: string;
+  title: string;
+  slug: { current: string };
+  excerpt: string;
+  content: any[];
+  author: string;
+  publishedAt: string;
+  category: string;
+  featured: boolean;
+  image: any;
+  tags: string[];
+  readTime: number;
+}
+
+export interface Testimonial {
+  _id: string;
+  name: string;
+  role: string;
+  company?: string;
+  testimonial: string;
+  rating: number;
+  image?: any;
+  featured: boolean;
+  category: string;
+  date: string;
+  order?: number;
+}

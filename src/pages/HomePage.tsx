@@ -6,6 +6,7 @@ import TeamHighlights from '../components/home/TeamHighlights';
 import LiveMatches from '../components/home/LiveMatches';
 import NewsSection from '../components/home/NewsSection';
 import Sponsors from '../components/home/Sponsors';
+import TestimonialsSection from '../components/home/TestimonialsSection';
 
 const HomePage = () => {
   return (
@@ -25,6 +26,7 @@ const HomePage = () => {
       <TeamHighlights />
       <LiveMatches />
       <NewsSection />
+      <TestimonialsSection />
       <Sponsors />
     </motion.div>
   );

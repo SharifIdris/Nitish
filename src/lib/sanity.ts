@@ -129,5 +129,36 @@ export const queries = {
     prizePool,
     image,
     featured
+  }`,
+
+  // Blog posts
+  blog: `*[_type == "blog"] | order(publishedAt desc) {
+    _id,
+    title,
+    slug,
+    excerpt,
+    content,
+    author,
+    publishedAt,
+    category,
+    featured,
+    image,
+    tags,
+    readTime
+  }`,
+
+  // Testimonials
+  testimonials: `*[_type == "testimonial"] | order(order asc, date desc) {
+    _id,
+    name,
+    role,
+    company,
+    testimonial,
+    rating,
+    image,
+    featured,
+    category,
+    date,
+    order
   }`
 };
